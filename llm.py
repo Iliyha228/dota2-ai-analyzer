@@ -3,7 +3,6 @@ from items_db import init_db, get_item_name
 
 init_db()
 
-# ---------- Настройки Ollama ----------
 OLLAMA_URL = "http://127.0.0.1:11434/api/generate"
 MODEL_NAME = "t-tech/T-lite-it-2.1:q4_K_M"   # ← моя модель
 
@@ -19,7 +18,7 @@ SYSTEM_PROMPT = (
     "Ты строго соблюдаешь ролевые нормы KDA, данные в подсказке."
 )
 
-# ---------- Ролевые ожидания (с KDA‑нормами) ----------
+# ---------- Ролевые ожидания  ----------
 ROLE_EXPECTATIONS = """
 Роли и их эталонные KDA (формула: (K+A)/D):
 - Carry (1): KDA 3.5–5.0. Главное — фармить и выживать, минимум смертей.
@@ -49,7 +48,7 @@ def generate(prompt: str, max_tokens: int = 500, temperature: float = 0.1) -> st
     except Exception as e:
         return f"[Ошибка генерации: {e}]"
 
-# ---------- Формирование текста матча (компактная версия) ----------
+# ---------- Формирование текста матча ) ----------
 def build_match_text(summary: dict) -> str:
     players_text = ""
     radiant_players = []
@@ -58,7 +57,7 @@ def build_match_text(summary: dict) -> str:
     for p in summary["players"]:
         d = p["deaths"]
         kda = (p["kills"] + p["assists"]) / d if d > 0 else p["kills"] + p["assists"]
-        # Идентификатор: имя (если Anonymous – только герой)
+        # Идентификатор: имя
         player_id = p["name"] if p["name"] != "Anonymous" else p.get("hero_name", "Неизвестный герой")
         line = (
             f"{player_id} ({p.get('hero_name', '?')}, {p.get('role', '?')}) — "

@@ -19,8 +19,7 @@ app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# ----------------- Ключ Steam API (вставьте свой, если есть) -----------------
-STEAM_API_KEY = "352B0B0562B9B80E4EEB8B0FBC18E412"   # ← замените на реальный ключ
+STEAM_API_KEY = "352B0B0562B9B80E4EEB8B0FBC18E412"
 
 # ----------------- Steam OpenID -----------------
 STEAM_OPENID_URL = "https://steamcommunity.com/openid/login"
@@ -74,7 +73,7 @@ def get_player_profile(account_id: int) -> dict:
     except Exception:
         pass
 
-    # Если не вышло – используем Steam API (если задан ключ)
+    # Если не вышло – используем Steam API
     if STEAM_API_KEY:
         try:
             steam_id64 = account_id + 76561197960265728
@@ -96,7 +95,6 @@ def get_player_profile(account_id: int) -> dict:
     # Заглушка
     return {"personaname": f"User_{account_id}", "avatar": ""}
 
-# ----------------- Роли -----------------
 ROLES_MAP = {
     1: "Carry",
     2: "Mid",
@@ -309,9 +307,9 @@ def logout(request: Request):
     request.session.clear()
     return RedirectResponse("/")
 
-# ----------------- Личный кабинет (с вкладками и честной статистикой) -----------------
+# ----------------- Личный кабинет  -----------------
 @app.get("/profile", response_class=HTMLResponse)
-# ----------------- Личный кабинет (с вкладками и честной статистикой) -----------------
+# ----------------- Личный кабинет  -----------------
 @app.get("/profile", response_class=HTMLResponse)
 def profile(request: Request):
     user = get_current_user(request)
@@ -320,7 +318,7 @@ def profile(request: Request):
 
     account_id = user["account_id"]
 
-    # ---------- История матчей (последние 100) ----------
+    # ---------- История матчей  ----------
     matches = []
     try:
         resp_matches = requests.get(
@@ -373,7 +371,7 @@ def profile(request: Request):
     except Exception:
         matches = []
 
-    # ---------- Полная статистика профиля (из OpenDota) ----------
+    # ---------- Полная статистика профиля  ----------
     profile_total = None
     try:
         resp_profile = requests.get(
@@ -398,7 +396,7 @@ def profile(request: Request):
     except Exception:
         profile_total = None
 
-    # ---------- Статистика за последние 100 игр (на основе matches) ----------
+    # ---------- Статистика за последние 100 игр ----------
     last100 = None
     if matches:
         total_100 = len(matches)
