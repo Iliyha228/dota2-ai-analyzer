@@ -19,7 +19,7 @@ app.add_middleware(SessionMiddleware, secret_key=SECRET_KEY)
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-STEAM_API_KEY = "352B0B0562B9B80E4EEB8B0FBC18E412"
+STEAM_API_KEY = "спрятал ключ"
 
 # ----------------- Steam OpenID -----------------
 STEAM_OPENID_URL = "https://steamcommunity.com/openid/login"
