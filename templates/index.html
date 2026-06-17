@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Добро пожаловать в анализатор Dota 2!</h2>
+<p>Здесь вы можете проанализировать любой публичный матч, просто введя его ID, либо авторизоваться через Steam и выбрать матч из своей истории.</p>
+<div style="display: flex; gap: 20px; margin-top: 30px;">
+    <a href="/analyze" class="btn">Анализ матча по ID</a>
+    {% if user %}
+        <a href="/profile" class="btn">Личный кабинет</a>
+    {% else %}
+        <a href="/auth/login" class="btn">Войти через Steam</a>
+    {% endif %}
+</div>
+<style>
+    .btn {
+        padding: 15px 25px;
+        background: linear-gradient(135deg, #d1362a, #8b1f17);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}

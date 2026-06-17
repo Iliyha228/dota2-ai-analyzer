@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Личный кабинет – {{ user.name }}</h2>
+<img src="{{ user.avatar }}" width="64" height="64" style="border-radius: 50%; margin-bottom: 20px;">
+
+<!-- Табы -->
+<div class="tabs">
+    <button class="tab-button active" onclick="openTab('tab-history')">История игр</button>
+    <button class="tab-button" onclick="openTab('tab-stats')">Статистика профиля</button>
+</div>
+
+<!-- Контент таба 1: История -->
+<div id="tab-history" class="tab-content active">
+    <h3>Последние матчи</h3>
+    {% if matches %}
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>Герой</th>
+                <th>Результат</th>
+                <th>K/D/A</th>
+                <th>Дата</th>
+                <th>Длительность</th>
+                <th>Тип игры</th>
+                <th>Действие</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for m in matches %}
+            <tr>
+                <td class="hero-cell">
+                    <img src="{{ m.hero_image }}" class="hero-icon" alt="{{ m.hero_name }}">
+                    <span>{{ m.hero_name }}</span>
+                </td>
+                <td>
+                    {% if m.win %}
+                    <span class="win-text">Победа</span>
+                    {% else %}
+                    <span class="loss-text">Поражение</span>
+                    {% endif %}
+                </td>
+                <td>{{ m.kills }}/{{ m.deaths }}/{{ m.assists }}</td>
+                <td>{{ m.start_time_str }}</td>
+                <td>{{ m.duration }}</td>
+                <td>{{ m.game_type }}</td>
+                <td>
+                    <a href="/analyze?match_id={{ m.match_id }}" class="analyze-btn">Анализ</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Нет данных о матчах.</p>
+    {% endif %}
+</div>
+
+<!-- Контент таба 2: Статистика -->
+<div id="tab-stats" class="tab-content">
+    <h3>Общая статистика</h3>
+    {% if profile_total %}
+    <div class="stats-grid">
+        <div class="stat-box">
+            <span class="stat-label">Всего игр</span>
+            <span class="stat-value">{{ profile_total.total_games }}</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Винрейт</span>
+            <span class="stat-value">{{ profile_total.winrate }}%</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Побед / Поражений</span>
+            <span class="stat-value">{{ profile_total.win_count }} / {{ profile_total.loss_count }}</span>
+        </div>
+        {% if profile_total.mmr_estimate %}
+        <div class="stat-box">
+            <span class="stat-label">MMR (приблизит.)</span>
+            <span class="stat-value">{{ profile_total.mmr_estimate }}</span>
+        </div>
+        {% endif %}
+    </div>
+    {% else %}
+    <p>Общая статистика недоступна (возможно, профиль скрыт).</p>
+    {% endif %}
+
+    {% if last100 %}
+    <h3>Последние 100 игр</h3>
+    <div class="stats-grid">
+        <div class="stat-box">
+            <span class="stat-label">Матчей</span>
+            <span class="stat-value">{{ last100.total_games }}</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Винрейт</span>
+            <span class="stat-value">{{ last100.winrate }}%</span>
+        </div>
+        <div class="stat-box">
+            <span class="stat-label">Побед / Поражений</span>
+            <span class="stat-value">{{ last100.win_count }} / {{ last100.loss_count }}</span>
+        </div>
+    </div>
+
+    <h4>Любимые герои (за 100 игр)</h4>
+    <table class="history-table">
+        <thead>
+            <tr>
+                <th>Герой</th>
+                <th>Матчи</th>
+                <th>Винрейт</th>
+                <th>KDA</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hero in last100.heroes %}
+            <tr>
+                <td class="hero-cell">
+                    <img src="{{ hero.image }}" class="hero-icon" alt="{{ hero.name }}">
+                    <span>{{ hero.name }}</span>
+                </td>
+                <td>{{ hero.games }}</td>
+                <td>{{ hero.winrate }}%</td>
+                <td>{{ hero.kda }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Нет данных о последних играх.</p>
+    {% endif %}
+</div>
+
+<script>
+function openTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+    document.querySelectorAll('.tab-button').forEach(tb => tb.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
+    event.target.classList.add('active');
+}
+</script>
+
+{% endblock %}

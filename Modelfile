@@ -1,0 +1,13 @@
+﻿FROM C:\Users\user\.ollama\models\blobs\sha256-f291ffa8558e86ca520eb74f0967097b7b96f89c14561bc3a680f20b00acf819
+TEMPLATE "{{ if .System }}<s><|im_start|>system
+{{ .System }}<|im_end|>
+{{ end }}{{ if .Prompt }}<|im_start|>user
+{{ .Prompt }}<|im_end|>
+{{ end }}<|im_start|>assistant
+{{ .Response }}<|im_end|>
+"
+PARAMETER stop <s>
+PARAMETER stop <|im_start|>
+PARAMETER stop <|im_end|>
+PARAMETER stop <|im_start|>user
+PARAMETER num_gpu 0

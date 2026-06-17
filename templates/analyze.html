@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+{% block content %}
+
+<form action="/analyze" method="get" class="search-form">
+    <input type="text" name="match_id" placeholder="Введите Match ID" value="{{ match_id if match_id else '' }}">
+    <button type="submit">Анализировать</button>
+</form>
+
+{% if error %}
+<p style="color:red;">{{ error }}</p>
+{% endif %}
+
+{% if winner %}
+<div class="result-box">
+    <h2>Результат матча</h2>
+    <p><b>Победитель:</b> {{ winner }}</p>
+    <p><b>Длительность:</b> {{ duration }} минут</p>
+    <p><b>MVP:</b> {{ mvp }}</p>
+</div>
+
+<!-- ====== Командные таблицы ====== -->
+<div class="teams-container">
+    <!-- Силы Света -->
+    <div class="team-box radiant">
+        <div class="team-header">
+            <h3>Силы Света</h3>
+            <span class="result-badge {{ 'win' if radiant_win else 'loss' }}">
+                {{ 'ПОБЕДА' if radiant_win else 'ПОРАЖЕНИЕ' }}
+            </span>
+        </div>
+        <table class="match-table">
+            <thead>
+                <tr>
+                    <th>Герой</th>
+                    <th>Роль</th>
+                    <th>Ур.</th>
+                    <th>У</th>
+                    <th>С</th>
+                    <th>П</th>
+                    <th>GPM</th>
+                    <th>Урон</th>
+                    <th>Хил</th>
+                    <th>Башни</th>
+                    <th>Ценность</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in players if p.is_radiant %}
+                <tr>
+                    <td class="hero-cell">
+                        <img src="{{ p.hero_image }}" class="hero-icon" alt="{{ p.hero_name }}">
+                        <div class="hero-name">
+                            <span class="player-name">{{ p.name }}</span>
+                            <span class="hero-title">{{ p.hero_name }}</span>
+                        </div>
+                    </td>
+                    <td>{{ p.role }}</td>
+                    <td>{{ p.level }}</td>
+                    <td>{{ p.kills }}</td>
+                    <td>{{ p.deaths }}</td>
+                    <td>{{ p.assists }}</td>
+                    <td>{{ p.gold_per_min }}</td>
+                    <td>{{ p.hero_damage }}</td>
+                    <td>{{ p.hero_healing }}</td>
+                    <td>{{ p.tower_damage }}</td>
+                    <td>{{ p.net_worth }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Силы Тьмы -->
+    <div class="team-box dire">
+        <div class="team-header">
+            <h3>Силы Тьмы</h3>
+            <span class="result-badge {{ 'win' if dire_win else 'loss' }}">
+                {{ 'ПОБЕДА' if dire_win else 'ПОРАЖЕНИЕ' }}
+            </span>
+        </div>
+        <table class="match-table">
+            <thead>
+                <tr>
+                    <th>Герой</th>
+                    <th>Роль</th>
+                    <th>Ур.</th>
+                    <th>У</th>
+                    <th>С</th>
+                    <th>П</th>
+                    <th>GPM</th>
+                    <th>Урон</th>
+                    <th>Хил</th>
+                    <th>Башни</th>
+                    <th>Ценность</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in players if not p.is_radiant %}
+                <tr>
+                    <td class="hero-cell">
+                        <img src="{{ p.hero_image }}" class="hero-icon" alt="{{ p.hero_name }}">
+                        <div class="hero-name">
+                            <span class="player-name">{{ p.name }}</span>
+                            <span class="hero-title">{{ p.hero_name }}</span>
+                        </div>
+                    </td>
+                    <td>{{ p.role }}</td>
+                    <td>{{ p.level }}</td>
+                    <td>{{ p.kills }}</td>
+                    <td>{{ p.deaths }}</td>
+                    <td>{{ p.assists }}</td>
+                    <td>{{ p.gold_per_min }}</td>
+                    <td>{{ p.hero_damage }}</td>
+                    <td>{{ p.hero_healing }}</td>
+                    <td>{{ p.tower_damage }}</td>
+                    <td>{{ p.net_worth }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<h3>Разбор матча</h3>
+<div class="analysis">{{ analysis }}</div>
+
+<h2>Анализ игрока</h2>
+<form action="/analyze_player" method="post">
+    <input type="hidden" name="match_id" value="{{ match_id }}">
+    <select name="player_name">
+        {% for p in players %}
+        <option value="{{ p.name }}">
+            {{ p.name }} ({{ p.hero_name }}, {{ p.role }})
+        </option>
+        {% endfor %}
+    </select>
+    <button type="submit">Разобрать</button>
+</form>
+{% endif %}
+
+{% if player_analysis %}
+<h3>Разбор игрока</h3>
+<div class="player-analysis">{{ player_analysis }}</div>
+{% endif %}
+<!-- разбор игрока был выше -->
+{% if player_analysis %}
+<h3>Разбор игрока</h3>
+<div class="player-analysis">{{ player_analysis }}</div>
+{% endif %}
+
+<!-- ====== Форма своего вопроса ====== -->
+{% if players %}
+<h3>Задать свой вопрос по матчу</h3>
+<form action="/ask_question" method="post" class="question-form">
+    <input type="hidden" name="match_id" value="{{ match_id }}">
+    <textarea name="user_question" rows="3" placeholder="Например: у кого был лучший нетворс? Почему Anti-Mage так быстро нафармил артефакты?"></textarea>
+    <button type="submit">Спросить</button>
+</form>
+
+{% if question_answer %}
+<div class="analysis" style="margin-top: 20px;">
+    <h4>Вопрос: {{ user_question }}</h4>
+    <p>{{ question_answer }}</p>
+</div>
+{% endif %}
+{% endif %}
+
+{% endblock %}

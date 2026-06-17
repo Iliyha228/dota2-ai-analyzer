@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Dota 2 AI Analyzer</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<header>
+    <h1>Dota 2 AI Analyzer</h1>
+    <nav>
+        <a href="/">Главная</a>
+        <a href="/analyze">Анализ матча</a>
+        {% if user %}
+            <a href="/profile">{{ user.name }}</a>
+            <a href="/auth/logout">Выйти</a>
+        {% else %}
+            <a href="/auth/login">Войти через Steam</a>
+        {% endif %}
+    </nav>
+</header>
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+<footer>AI Dota Analyzer</footer>
+</body>
+</html>
